@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeTalk</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #startContainer, #chatContainer {
+      max-width: 400px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #messages {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      border-radius: 5px;
+      transform: translate3d(0, 0, 50px);
+      transition: transform 0.5s ease-in-out;
+    }
+
+    #messages li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    form {
+      display: flex;
+      margin-top: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px 0 0 5px;
+      outline: none;
+    }
+
+    button {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 0 5px 5px 0;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #startButton {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #startButton:hover {
+      background-color: #45a049;
+    }
+    
+    @keyframes spinner {
+      0% {
+        transform: translate3d(-50%, -50%, 0) rotate(0deg);
+      }
+      100% {
+        transform: translate3d(-50%, -50%, 0) rotate(360deg);
+      }
+    }
+    
+    .spin::before {
+      animation: 1.5s linear infinite spinner;
+      animation-play-state: inherit;
+      border: solid 5px #cfd0d1;
+      border-bottom-color: #1c87c9;
+      border-radius: 50%;
+      content: "";
+      height: 300px;
+      width: 300px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      will-change: transform;
+    }
+  </style>
+</head>
+<body>
+  <div id="startContainer">
+    <div id="loadingText">Click the button below to start looking for a user...</div>
+    <button id="startButton">Search</button>
+  </div>
+
+  <div class="spin" style="display: none;">
+    Finding Partner!
+  </div>
+
+  <div id="chatContainer">
+    <ul id="messages"></ul>
+    <div id="typing-indicator"></div>
+    <form id="form" action="">
+      <input id="m" autocomplete="off" placeholder="Type your message..." />
+      <button>Send</button>
+      <button id="disconnectButton">Disconnect</button>
+    </form>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    $(function () {
+      var socket = io();
+      var messagesContainer = $('#messages');
+      var typingIndicator = $('#typing-indicator');
+      var typingTimeout;
+
+      $('#chatContainer').hide();
+      $(".spin").hide();
+
+      // Show the start container initially
+      $('#startContainer').show();
+
+      // Start button logic
+      $('#startButton').click(function(){
+        socket.emit('start looking');
+        $('#startContainer').hide();
+        $(".spin").show();
+      });
+
+      $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+
+      socket.on('update typing status', function(data){
+        if (data.isTyping) {
+          typingIndicator.text(data.username + ' is typing...');
+        } else {
+          typingIndicator.text('');
+        }
+      });
+
+      socket.on('chat message', function(msg){
+        messagesContainer.append($('<li>').text(msg));
+        messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+      });
+
+      $('#m').on('input', function() {
+        clearTimeout(typingTimeout);
+        if ($(this).val() !== '') {
+          socket.emit('typing');
+        } else {
+          socket.emit('stop typing');
+        }
+        typingTimeout = setTimeout(() => {
+          socket.emit('stop typing');
+        }, 2000);
+      });
+
+      socket.on('connect', function() {
+        $('#loadingContainer').hide();
+      });
+
+      // Listen for room connection
+      socket.on('room connected', function() {
+        $(".spin").hide();
+        messagesContainer.empty();
+        $('#chatContainer').show();
+      });
+
+      // Disconnect button logic
+      $('#disconnectButton').click(function(){
+        messagesContainer.empty();
+        socket.emit('disconnect room');
+        $('#chatContainer').hide();
+        $('#startContainer').show();
+        messagesContainer.empty();
+      });
+    });
+  </script>
+</body>
+</html>
