@@ -19,4 +19,4 @@ After installing the dependencies, you can start the server by running the follo
 node app.js
 
 Access the Application:
-Open a web browser and go to http://localhost:3000. This assumes that the server is running on port 3000 as specified in your code. If you see the message "Server is running on port 3000" in the terminal, it means the server is up and running.
+Open a web browser and go to http://localhost:3000. If you see the message "Server is running on port 3000" in the terminal, it means the server is up and running.
