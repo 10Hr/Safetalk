@@ -1,3 +1,5 @@
+REPORT: https://docs.google.com/document/d/1fjLLZpbZqyFEp8Mtnyqf6dIDfhMZ9-uL0BQRnlXoiBA/edit?usp=sharing
+
 Installation and Instructions:
 
 Download latest release from the Release page: https://github.com/10Hr/Safetalk/releases
