@@ -1,6 +1,6 @@
 Installation and Instructions:
 
-Download latest release from the Release page on GitHub: https://github.com/10Hr/Safetalk/releases
+Download latest release from the Release page: https://github.com/10Hr/Safetalk/releases
 
 Accessing the Application:
 After downloading the zip file unzip it to where you would like to save the program
