@@ -9,7 +9,7 @@ Significance of the project: SafeTalk holds significant importance in offering a
 
 Installation and Instructions:
 
-Download latest release from the Release page on GitHub: https://github.com/10Hr/Safetalk/releases
+Download latest release from the Release page: https://github.com/10Hr/Safetalk/releases
 
 Accessing the Application:
 After downloading the zip file unzip it to where you would like to save the program
@@ -28,7 +28,7 @@ After installing the dependencies, you can start the server by running the follo
 node app.js
 
 Access the Application:
-Open a web browser and go to http://localhost:3000. This assumes that the server is running on port 3000 as specified in your code. If you see the message "Server is running on port 3000" in the terminal, it means the server is up and running.
+Open a web browser and go to http://localhost:3000. If you see the message "Server is running on port 3000" in the terminal, it means the server is up and running.
 
 
 
